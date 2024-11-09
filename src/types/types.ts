@@ -7,5 +7,6 @@ export type Reservation = {
 	email: string;
 	phone: string;
 	guestNumber: number;
+	slot?: number[];
 }
 

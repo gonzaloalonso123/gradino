@@ -19,7 +19,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { auth } from "@/server/config";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const LoginSchema = Yup.object().shape({
@@ -38,6 +38,12 @@ export default function LoginForm() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    if (auth.currentUser) {
+      return router.push("/admin/overview");
+    }
+  }, []);
+
   const submit = (values: LoginFormValues) => {
     setPersistence(auth, browserSessionPersistence)
       .then(async () => {
@@ -45,7 +51,7 @@ export default function LoginForm() {
       })
       .catch((error) => {
         const errorMessage = error.message;
-		setLoginError(errorMessage);
+        setLoginError(errorMessage);
       });
   };
 
