@@ -23,7 +23,7 @@ export default function Menu() {
             <h2 className="text-4xl font-extrabold mb-6 text-primary">
               Upptäck Vår Meny
             </h2>
-            <p className="text-lg pb-8">
+            <p className="text-xl pb-8">
               Njut av våra kulinariska skapelser, framtagna med passion och
               precision.
             </p>
