@@ -19,7 +19,7 @@ export default function CarouselMenu() {
         {Array.from({ length: 10 }).map((_, index) => (
           <CarouselItem
             key={index}
-            className="md:basis-1/2 lg:basis-1/3 hover:scale-105 transition-all"
+            className="md:basis-1/2 lg:basis-1/3 transition-all"
           >
             <div className="p-2">
               <Card>

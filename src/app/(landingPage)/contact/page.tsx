@@ -6,7 +6,7 @@ import ContactBgImage from "../assets/menu.jpg"; // Replace with your contact ba
 
 export default function Contact() {
   return (
-    <section id="contact" className="h-full">
+    <section id="contacts" className="h-full">
       <Parallax
         bgImage={ContactBgImage.src}
         bgImageAlt="Contact Background"
@@ -23,14 +23,14 @@ export default function Contact() {
             <h2 className="text-4xl font-extrabold mb-6 text-primary">
               Kontakta Oss
             </h2>
-            <p className="text-lg pb-8">
+            <p className="text-xl pb-8">
               Vi är här för att hjälpa dig! Kontakta oss för frågor eller mer
               information.
             </p>
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-6 text-xl">
+          <div className="space-y-6 text-2xl">
             <ul>
               <li>
                 <strong>Adress:</strong> Storgatan 123, Uppsala, Sverige

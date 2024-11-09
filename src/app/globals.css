@@ -3,37 +3,91 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 html {
   scroll-behavior: smooth;
 }
-@keyframes scroll-left {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+.embla {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
-@keyframes scroll-right {
-  0% {
-    transform: translateX(50%);
-  }
-  100% {
-    transform: translateX(0);
-  }
+.embla__viewport {
+  overflow: hidden;
 }
 
-.animate-scroll-left {
-  animation: scroll-left 20s linear infinite;
+.embla__container {
   display: flex;
+  padding: 0; /* Ensure no padding inside the container */
+  margin: 0; /* Ensure no margin outside the container */
 }
 
-.animate-scroll-left-fast {
-  animation: scroll-left 10s linear infinite;
-  display: flex;
+.embla__slide {
+  min-width: 410px; /* Each slide should take 100% of the viewport width */
+  height: 260px;
+  flex: 0 0 auto; /* Prevents stretching and ensures a fixed width */
+  display: flex; /* Ensures content is centered in each slide */
+  justify-content: center;
+  align-items: center;
+}
+
+.embla__image {
+  border-radius: 0.5rem;
+  width: 400px; /* Ensures the image fills the slide container */
+  height: 250px;
+  /* Adjust the height to control the image size */
+  object-fit: cover; /* Ensures the image is not stretched or squished */
+  display: block; /* Removes any extra space below the image */
+}
+
+.embla__prev,
+.embla__next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.embla__prev {
+  left: 10px;
+}
+
+.embla__next {
+  right: 10px;
+}
+
+.react-calendar {
+  width: 100% !important;
+}
+
+.calender-body {
+  background-color: #ffffff !important;
+}
+
+.react-calendar__tile--active {
+  background-color: rgb(209, 205, 172) !important;
+}
+
+.today {
+  border: 2px solid #1f1b13 !important;
+}
+
+.react-calendar_month-viewdays_day {
+  margin: 12px !important;
+}
+
+.react-calendar__tile--active:enabled:hover {
+  background-color: rgb(209, 205, 192) !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #1f1b13 !important;
 }
 
 @layer base {
