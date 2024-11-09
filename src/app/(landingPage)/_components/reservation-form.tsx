@@ -6,11 +6,10 @@ import * as Yup from "yup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FiArrowLeft, FiCheckCircle } from "react-icons/fi"; // Importing the left arrow icon
-import Calendar from "react-calendar"; //
+import Calendar from "react-calendar"; 
 import "react-calendar/dist/Calendar.css";
-import { FiUser, FiCalendar, FiClock } from "react-icons/fi";
 import { addReservation } from "../../../server/firestore";
+import { ArrowBigLeft, Calendar1, CircleCheck, Clock, User } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -65,37 +64,23 @@ export default function ReservationForm() {
     <div className="max-w-md mx-auto w-full p-4">
       <div className="flex items-center ">
         {step > 1 && step < 6 && (
-          <Button
-            className="absolute h-6 w-6 top-4 left-4 "
-            onClick={handlePrevStep}
-          >
-            <FiArrowLeft />
+          <Button className="absolute h-6 w-6 top-4 left-4 " onClick={handlePrevStep}>
+            <ArrowBigLeft />
           </Button>
         )}
-        <h2 className="text-3xl font-extrabold mb-2 text-center w-full text-primary">
-          Il Gradino
-        </h2>
+        <h2 className="text-3xl font-extrabold mb-2 text-center w-full text-primary">Il Gradino</h2>
       </div>
       <div className="h-[1px] bg-primary mb-4" />
       {/* Step 1: Choose Lunch or Middag */}
       {step === 1 && (
         <div className="space-y-4 flex flex-col justify-start text-left">
-          <div className="text-center ">
-            Är ni fler än 5 personer vänligen ring 08-660 76 94 eller maila
-            till: ciao@montanari.se. Benvenuti!
-          </div>
+          <div className="text-center ">Är ni fler än 5 personer vänligen ring 08-660 76 94 eller maila till: ciao@montanari.se. Benvenuti!</div>
           <div className="h-[1px] bg-primary  my-4" />
 
-          <Button
-            className="text-lg h-16 pointer"
-            onClick={() => handleNextStep({ meal: "Lunch" })}
-          >
+          <Button className="text-lg h-16 pointer" onClick={() => handleNextStep({ meal: "Lunch" })}>
             Lunch
           </Button>
-          <Button
-            className="text-lg h-16 pointer"
-            onClick={() => handleNextStep({ meal: "Middag" })}
-          >
+          <Button className="text-lg h-16 pointer" onClick={() => handleNextStep({ meal: "Middag" })}>
             Middag
           </Button>
         </div>
@@ -103,17 +88,11 @@ export default function ReservationForm() {
       {/* Step 2: Choose Number of Guests */}
       {step === 2 && (
         <div className=" w-full flex flex-col ">
-          <h3 className="text-xl font-semibold text-center">
-            {formValues.meal}
-          </h3>
+          <h3 className="text-xl font-semibold text-center">{formValues.meal}</h3>
           <div className="h-[1px] bg-primary  my-4" />
           <div className="text-center mb-4">Välj antal personer</div>
           {[1, 2, 3, 4, 5].map((guest) => (
-            <Button
-              key={guest}
-              className="text-lg h-16 pointer mb-4"
-              onClick={() => handleNextStep({ guests: guest })}
-            >
+            <Button key={guest} className="text-lg h-16 pointer mb-4" onClick={() => handleNextStep({ guests: guest })}>
               {guest} gäster
             </Button>
           ))}
@@ -122,11 +101,9 @@ export default function ReservationForm() {
       {/* Step 3: Choose Date */}
       {step === 3 && (
         <div className="flex flex-col justify-center items-center">
-          <h3 className="text-xl font-semibold text-center mb-2">
-            {formValues.meal}
-          </h3>
+          <h3 className="text-xl font-semibold text-center mb-2">{formValues.meal}</h3>
           <div className="text-center flex items-center gap-2">
-            <FiUser className="text-gray-500" />
+            <User />
             <span>{formValues.guests} gäster</span>
           </div>{" "}
           <div className="h-[1px] bg-primary  my-4 w-full" />
@@ -146,18 +123,16 @@ export default function ReservationForm() {
       {/* Step 4: Choose Time */}
       {step === 4 && (
         <div className="">
-          <h3 className="text-xl font-semibold text-center mb-2">
-            {formValues.meal}
-          </h3>
+          <h3 className="text-xl font-semibold text-center mb-2">{formValues.meal}</h3>
           <div className=" flex gap-4 justify-center">
             <div className="text-center flex items-center gap-2">
-              <FiUser className="text-gray-500" />
+              <User />
               <span>{formValues.guests} gäster</span>
             </div>
 
             {/* Date with icon */}
             <div className="text-center flex items-center gap-2">
-              <FiCalendar className="text-gray-500" />
+              <Calendar1 />
               <span>{formattedDate}</span>
             </div>
           </div>
@@ -175,24 +150,22 @@ export default function ReservationForm() {
       {/* Step 5: Contact Information */}
       {step === 5 && (
         <div>
-          <h3 className="text-xl font-semibold text-center mb-2">
-            {formValues.meal}
-          </h3>
+          <h3 className="text-xl font-semibold text-center mb-2">{formValues.meal}</h3>
           <div className=" flex gap-4 justify-center">
             <div className="text-center flex items-center gap-2">
-              <FiUser className="text-gray-500" />
+              <User />
               <span>{formValues.guests} gäster</span>
             </div>
 
             {/* Date with icon */}
             <div className="text-center flex items-center gap-2">
-              <FiCalendar className="text-gray-500" />
+              <Calendar1 />
               <span>{formattedDate}</span>
             </div>
 
             {/* Time with icon */}
             <div className="text-center flex items-center gap-2">
-              <FiClock className="text-gray-500" />
+              <Clock />
               <span>
                 {formValues.time} - {getTwoHoursLater(formValues.time)}
               </span>
@@ -219,41 +192,25 @@ export default function ReservationForm() {
                 <div>
                   <Label htmlFor="name">Name *</Label>
                   <Field as={Input} id="name" name="name" />
-                  {errors.name && touched.name && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {errors.name}
-                    </div>
-                  )}
+                  {errors.name && touched.name && <div className="text-red-500 text-sm mt-1">{errors.name}</div>}
                 </div>
 
                 <div>
                   <Label htmlFor="surname">Surname *</Label>
                   <Field as={Input} id="surname" name="surname" />
-                  {errors.surname && touched.surname && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {errors.surname}
-                    </div>
-                  )}
+                  {errors.surname && touched.surname && <div className="text-red-500 text-sm mt-1">{errors.surname}</div>}
                 </div>
 
                 <div>
                   <Label htmlFor="email">Email *</Label>
                   <Field as={Input} id="email" name="email" type="email" />
-                  {errors.email && touched.email && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {errors.email}
-                    </div>
-                  )}
+                  {errors.email && touched.email && <div className="text-red-500 text-sm mt-1">{errors.email}</div>}
                 </div>
 
                 <div>
                   <Label htmlFor="phone">Phone *</Label>
                   <Field as={Input} id="phone" name="phone" type="tel" />
-                  {errors.phone && touched.phone && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {errors.phone}
-                    </div>
-                  )}
+                  {errors.phone && touched.phone && <div className="text-red-500 text-sm mt-1">{errors.phone}</div>}
                 </div>
                 <div className="justify-center items-center flex">
                   <Button type="submit" className="h-12 w-full text-lg">
@@ -267,13 +224,9 @@ export default function ReservationForm() {
       )}
       {step === 6 && (
         <div className="flex flex-col justify-center items-center text-center mt-20 ">
-          <FiCheckCircle className="text-primary text-5xl mb-2" />
-          <h3 className="text-2xl font-semibold text-primary">
-            Bokning Bekräftad!
-          </h3>
-          <p className="text-gray-600 mt-2">
-            Grazie för din reservation. Benvenuti!!
-          </p>
+          <CircleCheck />
+          <h3 className="text-2xl font-semibold text-primary">Bokning Bekräftad!</h3>
+          <p className="text-gray-600 mt-2">Grazie för din reservation. Benvenuti!!</p>
         </div>
       )}
     </div>
