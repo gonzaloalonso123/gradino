@@ -185,6 +185,7 @@ const getTimeSlotsAvailable = (reservations :Reservation[], slots: Slot[], openi
 		return thereIsASlot;
 	})
 	
+	console.log(availableSlots);
 	return availableSlots;
 }
 
