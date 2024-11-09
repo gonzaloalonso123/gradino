@@ -41,7 +41,7 @@ export default function ReservationForm() {
   };
 
   const handleDateChange = (date: Date) => {
-    date.setHours(12, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
     handleNextStep({ date: date.toISOString().split("T")[0] });
     console.log(date);
   };
