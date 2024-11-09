@@ -272,7 +272,7 @@ export default function ReservationForm() {
             Bokning Bekräftad!
           </h3>
           <p className="text-gray-600 mt-2">
-            Grazie för din reservation. Benvenuti!
+            Grazie för din reservation. Benvenuti!!
           </p>
         </div>
       )}
