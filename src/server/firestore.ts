@@ -1,6 +1,6 @@
 import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "./config";
-import { getAllSlots, getSlotsForReservation, getTimeSlotsAvailable } from "@/helpers/helpers";
+import { getTimeSlotsAvailable } from "@/helpers/helpers";
 import { Reservation, Settings } from "@/types/types";
 
 export async function addReservation(reservation: Reservation) {
