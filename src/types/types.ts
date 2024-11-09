@@ -1,4 +1,3 @@
-
 export type Reservation = {
 	id: number;
 	name: string;
