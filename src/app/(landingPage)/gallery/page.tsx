@@ -1,59 +1,79 @@
-import React from "react";
+"use client";
 
-export default function Gallery() {
+import React, { useCallback, useEffect, useState } from "react";
+import { EmblaOptionsType } from "embla-carousel";
+import useEmblaCarousel from "embla-carousel-react";
+import AutoScroll from "embla-carousel-auto-scroll";
+
+const Gallery: React.FC = () => {
+  // 10 Placeholder images using Lorem Picsum
+  const slides = [
+    "https://picsum.photos/800/400?random=1",
+    "https://picsum.photos/800/400?random=2",
+    "https://picsum.photos/800/400?random=3",
+    "https://picsum.photos/800/400?random=4",
+    "https://picsum.photos/800/400?random=5",
+    "https://picsum.photos/800/400?random=6",
+    "https://picsum.photos/800/400?random=7",
+    "https://picsum.photos/800/400?random=8",
+    "https://picsum.photos/800/400?random=9",
+    "https://picsum.photos/800/400?random=10",
+  ];
+
+  // Embla carousel setup with autoplay enabled on initialization and looping for the first carousel
+  const [emblaRef] = useEmblaCarousel(
+    { loop: true }, // Infinite loop enabled
+    [AutoScroll({ playOnInit: true, speed: 1 })]
+  );
+
+  // Embla carousel setup for the second carousel (opposite direction)
+  const [emblaRef2] = useEmblaCarousel(
+    { loop: true }, // Infinite loop enabled
+    [AutoScroll({ playOnInit: true, speed: 2 })]
+  );
+
   return (
-    <div className="overflow-hidden py-12">
-      <h1 className="text-3xl font-bold text-center mb-8">Galleri</h1>{" "}
-      {/* Updated to Swedish */}
-      <p className="text-center text-lg mb-8">
-        Upptäck vårt fantastiska galleri med bilder som inspirerar och berättar
-        en historia. Bläddra igenom och låt dig inspireras!
+    <section id="gallery" className="pb-1 ">
+      {/* First Carousel - Default Direction (Left to Right) */}
+      <h2 className="text-4xl font-bold   pt-6 pb-6 text-center">Galleri</h2>
+      <p className="text-xl text-gray-800  text-center pb-8">
+        Utforska vårt galleri för att få en smak av vår restaurang. Här kan du
+        se våra läckra rätter och den inbjudande atmosfären vi erbjuder.
       </p>
-      <div className="space-y-8">
-        {/* First Row (Right to Left) */}
-        <div className="flex animate-scroll-left space-x-4">
-          {/* Duplicate images at the beginning and end for a seamless loop */}
-          {Array.from({ length: 10 }).map((_, index) => (
-            <img
-              key={index}
-              src={`https://picsum.photos/500/300?random=${index + 1}`} // Different aspect ratio
-              alt={`Gallery image ${index + 1}`}
-              className="w-80 object-cover rounded-sm shadow-md" // Adjust width and remove fixed height
-            />
-          ))}
-          {/* Images for the second half (to complete the infinite effect) */}
-          {Array.from({ length: 10 }).map((_, index) => (
-            <img
-              key={index + 10}
-              src={`https://picsum.photos/500/300?random=${index + 11}`} // Different aspect ratio
-              alt={`Gallery image ${index + 11}`}
-              className="w-80 object-cover rounded-sm shadow-md" // Adjust width and remove fixed height
-            />
-          ))}
-        </div>
-
-        {/* Second Row (Right to Left) */}
-        <div className="flex animate-scroll-left-fast space-x-4">
-          {/* Duplicate images at the beginning and end for seamless loop */}
-          {Array.from({ length: 10 }).map((_, index) => (
-            <img
-              key={index}
-              src={`https://picsum.photos/500/300?random=${index + 20}`} // Different aspect ratio
-              alt={`Gallery image ${index + 1}`}
-              className="w-80 object-cover rounded-sm shadow-md" // Adjust width and remove fixed height
-            />
-          ))}
-          {/* Images for the second half (to complete the infinite effect) */}
-          {Array.from({ length: 10 }).map((_, index) => (
-            <img
-              key={index + 10}
-              src={`https://picsum.photos/500/300?random=${index + 20}`} // Different aspect ratio
-              alt={`Gallery image ${index + 31}`}
-              className="w-80 object-cover rounded-sm shadow-md" // Adjust width and remove fixed height
-            />
-          ))}
+      <div className="embla">
+        <div className="embla__viewport" ref={emblaRef}>
+          <div className="embla__container">
+            {slides.map((src, index) => (
+              <div className="embla__slide" key={index}>
+                <img
+                  src={src}
+                  alt={`Slide ${index + 1}`}
+                  className="embla__image"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Second Carousel - Opposite Direction (Right to Left) */}
+      <div className="embla">
+        <div className="embla__viewport" ref={emblaRef2}>
+          <div className="embla__container">
+            {slides.map((src, index) => (
+              <div className="embla__slide" key={index}>
+                <img
+                  src={src}
+                  alt={`Slide ${index + 1}`}
+                  className="embla__image"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
-}
+};
+
+export default Gallery;

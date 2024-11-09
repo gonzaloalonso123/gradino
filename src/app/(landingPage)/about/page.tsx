@@ -1,11 +1,7 @@
 import StaffImage from "../assets/staff.jpg";
-
 export default function About() {
   return (
-    <section
-      id="about"
-      className="flex flex-col-reverse lg:flex-row bg-gray-50 "
-    >
+    <section id="about" className="flex flex-col-reverse lg:flex-row ">
       <div className="lg:w-1/2 h-[70vh] overflow-hidden lg:mb-0">
         <img
           src={StaffImage.src}
@@ -14,7 +10,7 @@ export default function About() {
         />
       </div>
       <div className="lg:w-1/2 lg:pl-8 p-8 flex flex-col justify-between items-center lg:items-start">
-        <h2 className="text-4xl font-bold mb-6 text-gray-900 ">Om Oss</h2>
+        <h2 className="text-4xl font-bold mb-6">Om Oss</h2>
         <p className="text-xl text-gray-800 mb-6">
           På Benvenuti handlar allt om att ge våra gäster en unik och minnesvärd
           upplevelse. Vi kombinerar passion och expertis för att skapa rätter
@@ -32,7 +28,7 @@ export default function About() {
         <div className="">
           <a
             href="#contact"
-            className="inline-block text-sm bg-primary text-black py-2 px-6 md:py-3 md:px-8 rounded-sm font-semibold transition duration-300 hover:bg-transparent border border-black "
+            className="inline-block text-sm bg-primary text-black py-2 px-6 md:py-3 md:px-8 rounded-sm font-semibold transition duration-300 hover:bg-transparent border border-black"
           >
             Kontakta oss
           </a>
