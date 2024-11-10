@@ -3,6 +3,8 @@ import { differenceInMinutes, format } from "date-fns";
 import { Reservation, Table } from "@/types/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import "./timeline.css";
+import { Delete, Edit, User } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const CELL_WIDTH = 40;
 const CELL_HEIGHT = 40;
@@ -53,7 +55,7 @@ export default function Timeline({ reservations, tables, startingHour, endingHou
   return (
     <div className="flex flex-col">
       <div className="flex">
-        <Sider Tables={tables} />
+        <Sider tables={tables} />
         <div className="flex flex-col relative">
           <Header timeTables={timeTables} />
           <Cells timeTables={timeTables} Tables={tables} />
@@ -88,11 +90,15 @@ const CurrentTimeLine = ({ currentTimePosition }: { currentTimePosition: number 
   );
 };
 
-const Sider = ({ Tables }: { Tables: Table[] }) => (
+const Sider = ({ tables }: { tables: Table[] }) => (
   <div className="flex-shrink-0 w-10 sticky mt-10">
-    {Tables.map((Table, index) => (
-      <div key={index} className="h-10 border-b border-r flex items-center justify-center sticky left-0 bg-white z-20">
-        {Table.numberOfSits}
+    {tables.map((table, index) => (
+      <div key={index} className="h-10 border-b border-r flex items-center gap-2 justify-center sticky left-0 bg-white z-20">
+        {table.id}
+        <label className="text-gray-400 flex flex-col justify-center items-center  text-xs">
+          <User size={10} />
+          {table.numberOfSits}
+        </label>
       </div>
     ))}
   </div>
@@ -111,19 +117,38 @@ const ReservationBlock = ({ reservation }: { reservation: any }) => (
   <TooltipProvider>
     <Tooltip key={reservation.id}>
       <TooltipTrigger asChild>
-        <div
-          className="absolute text-white text-xs p-1 px-3 overflow-hidden rounded flex items-center justify-between animate-grow"
-          style={{
-            left: reservation.left,
-            top: reservation.top,
-            width: reservation.width,
-            height: CELL_HEIGHT - 10,
-            backgroundColor: reservation.color,
-          }}
-        >
-          {reservation.name}
-          <div className="rounded-full font-semibold">{reservation.guestNumber}</div>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div
+              className="absolute text-white text-xs p-1 px-3 overflow-hidden rounded flex items-center justify-between animate-grow opacity-95"
+              style={{
+                left: reservation.left,
+                top: reservation.top,
+                width: reservation.width,
+                height: CELL_HEIGHT - 10,
+                backgroundColor: reservation.color,
+              }}
+            >
+              {reservation.name}
+              <div className="rounded-full font-semibold flex items-center">
+                <User size={15} />
+                {reservation.guestNumber}
+              </div>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>{`${reservation.name} ${reservation.surname} `}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Edit />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Delete />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TooltipTrigger>
       <TooltipContent>
         <p>

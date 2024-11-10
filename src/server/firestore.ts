@@ -16,7 +16,7 @@ export async function addReservation(reservation: Reservation) {
 
 export async function getReservations(day: Date, schedule: "lunch" | "dinner") {
 	const settings = await getSettings();
-	const dayOfWeek = day.toLocaleDateString("us-US", { weekday: "long" }).toLowerCase();
+	const dayOfWeek = day.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
 	console.log(settings, dayOfWeek);
 	const scheduleSettings = settings[schedule][dayOfWeek];
 	const startTime = day.setHours(scheduleSettings.startTime, 0, 0, 0);
@@ -34,7 +34,7 @@ export async function getAvailableSlots(day: Date, schedule: "lunch" | "dinner",
 	const settings = await getSettings();
 	const { slotDuration, tables } = settings;
 	const reservations = await getReservations(day, schedule);
-	const dayOfWeek = day.toLocaleDateString("sv-SE", { weekday: "long" }).toLowerCase();
+	const dayOfWeek = day.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
 	const scheduleSettings = settings[schedule][dayOfWeek];
 	const slotsAvailable = getTimeSlotsAvailable(reservations, tables, scheduleSettings.startTime, scheduleSettings.endTime, slotDuration, guestNumber);
 	return slotsAvailable;
