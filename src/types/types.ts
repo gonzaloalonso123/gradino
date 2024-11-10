@@ -1,11 +1,11 @@
 export type Reservation = {
-	id: number;
-	name: string;
-	startDate: string;
-	endDate: string;
-	email: string;
-	phone: string;
-	guestNumber: number;
-	slot?: number[];
-}
-
+  id?: number;
+  name: string;
+  surname: string;
+  start: number;
+  end: number;
+  email: string;
+  phone: string;
+  guestNumber: number;
+  slot?: number[];
+};
