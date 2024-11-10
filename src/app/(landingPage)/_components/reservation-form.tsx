@@ -201,7 +201,7 @@ export default function ReservationForm() {
           <div className="text-center mb-4">Välj tid</div>
           <div className="flex justify-center gap-2">
             {["12:00", "13:00", "18:00", "19:00"].map((time) => (
-              <Button key={time} onClick={() => handleNextStep({ time })}>
+              <Button key={time} onClick={() => handleNextStep({ timess })}>
                 {time}
               </Button>
             ))}
