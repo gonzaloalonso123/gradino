@@ -165,8 +165,8 @@ const mockSlots = [
 ];
 
 export default function Page() {
-  const newRes = JSON.parse(JSON.stringify(mockData.reservations));
-  const newSlots = JSON.parse(JSON.stringify(mockSlots));
+  const newRes = JSON.parse(JSON.stringify([...mockData.reservations]));
+  const newSlots = JSON.parse(JSON.stringify([...mockSlots]));
 
   const { allocatedReservations } = getAllSlots(newRes, newSlots);
   return (
