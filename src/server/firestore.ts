@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "./config";
 import { getTimeSlotsAvailable } from "@/helpers/helpers";
 import { Reservation, Settings } from "@/types/types";
@@ -15,9 +15,7 @@ export async function addReservation(reservation: Reservation) {
 }
 
 export async function getAvailableSlots(day: Date, schedule: "lunch" | "dinner", guestNumber: number) {
-	const docRef = doc(db, "settings", "1");
-	const docSnap = await getDoc(docRef);
-	const settings = docSnap.data() as Settings;
+	const settings = await getSettings();
 	const { [schedule]: scheduleSettings, slotDuration, tables } = settings;
 	const startTime = day.setHours(scheduleSettings.startTime, 0, 0, 0);
 	const endTime = day.setHours(scheduleSettings.startTime, 0, 0, 0);
@@ -32,4 +30,16 @@ export async function getAvailableSlots(day: Date, schedule: "lunch" | "dinner",
 
 	const slotsAvailable = getTimeSlotsAvailable(reservations, tables, scheduleSettings.startTime, scheduleSettings.endTime, slotDuration, guestNumber);
 	console.log(slotsAvailable);
+}
+
+
+export async function getSettings() {
+	const docRef = doc(db, "settings", "1");
+	const docSnap = await getDoc(docRef);
+	const settings = docSnap.data() as Settings;
+	return settings;
+}
+
+export async function updateSettings(settings: Settings) {
+	await setDoc(doc(db, "settings", "1"), settings);
 }
