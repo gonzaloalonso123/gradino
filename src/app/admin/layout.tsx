@@ -6,7 +6,7 @@ export default ({ children }: { children: React.ReactNode }) => {
       <div className="flex min-h-screen w-screen">
         {children}
       </div>
-      <Navigation />
+      {/* <Navigation /> */}
     </div>
   );
 };

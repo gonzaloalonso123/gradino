@@ -1,9 +1,7 @@
 import { useMemo } from "react";
-import { differenceInMinutes, format, parseISO } from "date-fns";
-import { Reservation } from "@/types/types";
+import { differenceInMinutes, format } from "date-fns";
+import { Reservation, Table } from "@/types/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slot } from "../page";
 import "./timeline.css";
 
 const CELL_WIDTH = 40;
@@ -18,33 +16,33 @@ const generateRandomColor = () => {
   return color;
 };
 
-export default function Timeline({ reservations, slots, startingHour, endingHour, interval }: { reservations: Reservation[]; slots: Slot[]; startingHour: number; endingHour: number; interval: number }) {
-  const startOfTimeline = new Date();
+export default function Timeline({ reservations, tables, startingHour, endingHour, interval, date }: { reservations: Reservation[]; tables: Table[]; startingHour: number; endingHour: number; interval: number; date: string }) {
+  const startOfTimeline = new Date(date);
+  console.log(startOfTimeline, date);
   startOfTimeline.setHours(startingHour, 0, 0, 0);
   const hours = endingHour - startingHour;
 
-  const timeSlots = useMemo(() => {
+  const timeTables = useMemo(() => {
     return Array.from({ length: (hours * 60) / interval }, (_, i) => new Date(startOfTimeline.getTime() + i * interval * 60000));
   }, [startOfTimeline]);
 
   const reservationPositions = useMemo(() => {
     return reservations.flatMap((reservation) => {
-      const color = (reservation.slot?.length ?? 1) > 1 ? generateRandomColor() : "#0000bb";
-      //   const color = "blue";
-      return (reservation.slot ?? []).map((slot) => {
+      const color = (reservation.tables?.length ?? 1) > 1 ? generateRandomColor() : "#0000bb";
+      return (reservation.tables ?? []).map((table) => {
         const startMinutes = differenceInMinutes(new Date(reservation.start), startOfTimeline);
         const duration = differenceInMinutes(new Date(reservation.end), new Date(reservation.start));
-
         return {
           ...reservation,
           left: (startMinutes / interval) * CELL_WIDTH + 5,
           width: (duration / interval) * CELL_WIDTH - 10,
-          top: slot * CELL_HEIGHT + 5,
+          top: table * CELL_HEIGHT + 5,
           color,
         };
       });
     });
   }, [reservations, startOfTimeline]);
+  console.log("reservationPositions", reservationPositions);
 
   const currentTimePosition = useMemo(() => {
     const now = new Date();
@@ -55,10 +53,10 @@ export default function Timeline({ reservations, slots, startingHour, endingHour
   return (
     <div className="flex flex-col">
       <div className="flex">
-        <Sider slots={slots} />
+        <Sider Tables={tables} />
         <div className="flex flex-col relative">
-          <Header timeSlots={timeSlots} />
-          <Cells timeSlots={timeSlots} slots={slots} />
+          <Header timeTables={timeTables} />
+          <Cells timeTables={timeTables} Tables={tables} />
           {reservationPositions.map((reservation, index) => (
             <ReservationBlock key={index} reservation={reservation} />
           ))}
@@ -69,9 +67,9 @@ export default function Timeline({ reservations, slots, startingHour, endingHour
   );
 }
 
-const Header = ({ timeSlots }: { timeSlots: Date[] }) => (
+const Header = ({ timeTables }: { timeTables: Date[] }) => (
   <div className="flex h-10 border-b sticky -top-10 bg-white z-30 shadow-md">
-    {timeSlots.map(
+    {timeTables.map(
       (time, index) =>
         index % 4 === 0 && (
           <div key={index} className="flex-shrink-0 border-r text-xs flex items-center justify-center font-bold text-gray-500" style={{ width: CELL_WIDTH * 4 }}>
@@ -90,20 +88,20 @@ const CurrentTimeLine = ({ currentTimePosition }: { currentTimePosition: number 
   );
 };
 
-const Sider = ({ slots }: { slots: Slot[] }) => (
+const Sider = ({ Tables }: { Tables: Table[] }) => (
   <div className="flex-shrink-0 w-10 sticky mt-10">
-    {slots.map((slot, index) => (
+    {Tables.map((Table, index) => (
       <div key={index} className="h-10 border-b border-r flex items-center justify-center sticky left-0 bg-white z-20">
-        {slot.numberOfSits}
+        {Table.numberOfSits}
       </div>
     ))}
   </div>
 );
 
-const Cells = ({ timeSlots, slots }: { timeSlots: Date[]; slots: Slot[] }) =>
-  slots.map((table, index) => (
+const Cells = ({ timeTables, Tables }: { timeTables: Date[]; Tables: Table[] }) =>
+  Tables.map((table, index) => (
     <div key={table.id} className="flex h-10">
-      {timeSlots.map((time, index) => (
+      {timeTables.map((time, index) => (
         <div key={index} className="flex-shrink-0 border-r border-b" style={{ width: CELL_WIDTH }}></div>
       ))}
     </div>
@@ -117,7 +115,7 @@ const ReservationBlock = ({ reservation }: { reservation: any }) => (
           className="absolute text-white text-xs p-1 px-3 overflow-hidden rounded flex items-center justify-between animate-grow"
           style={{
             left: reservation.left,
-            top: reservation.top, // Adjusted to avoid overlap with header
+            top: reservation.top,
             width: reservation.width,
             height: CELL_HEIGHT - 10,
             backgroundColor: reservation.color,

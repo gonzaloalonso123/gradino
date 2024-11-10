@@ -1,30 +1,34 @@
 export type Reservation = {
-  id?: number;
-  name: string;
-  surname: string;
-  start: number;
-  end: number;
-  email: string;
-  phone: string;
-  guestNumber: number;
-  slot?: number[];
+	id?: number;
+	name: string;
+	surname: string;
+	start: number;
+	end: number;
+	email: string;
+	phone: string;
+	guestNumber: number;
+	tables?: number[];
+};
+
+export type DaySchedule = {
+	startTime: number;
+	endTime: number;
+	opens: boolean;
+};
+
+export type WeekSchedule = {
+	[key: string]: DaySchedule;
+};
+
+export type Table = {
+	id: number;
+	numberOfSits: number;
+	reservations?: Reservation[];
 };
 
 export type Settings = {
-  [key: string]: ScheduleSettings | number | Table[];
-  slotDuration: number;
-  tables: Table[];
-  lunch: ScheduleSettings;
-  dinner: ScheduleSettings;
-};
-
-interface ScheduleSettings {
-  startTime: number;
-  endTime: number;
-}
-
-export type Table = {
-  id: number;
-  numberOfSits: number;
-  reservations?: Reservation[];
+	lunch: WeekSchedule;
+	dinner: WeekSchedule;
+	slotDuration: number;
+	tables: Table[];
 };
