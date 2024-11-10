@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { addReservation } from "../../../server/firestore";
+import { addReservation, getAvailableSlots } from "../../../server/firestore";
 import { MoveLeft, Calendar1, CircleCheck, Clock, Users } from "lucide-react";
 import { Reservation } from "@/types/types";
 
@@ -19,17 +19,28 @@ const validationSchema = Yup.object().shape({
   phone: Yup.string().required("Phone number is required"),
 });
 
+interface FormInterface {
+  name: string;
+  surname: string;
+  email: string;
+  phone: string;
+  date: number;
+  time: number;
+  guests: number;
+  meal: "lunch" | "dinner";
+}
+
 export default function ReservationForm() {
   const [step, setStep] = useState(1);
-  const [formValues, setFormValues] = useState({
-    meal: "",
-    guestNumber: 1,
-    date: "",
-    time: "",
+  const [formValues, setFormValues] = useState<FormInterface>({
     name: "",
     surname: "",
     email: "",
     phone: "",
+    date: 1,
+    time: 1,
+    guests: 1,
+    meal: "lunch",
   });
 
   const handleNextStep = (values: Partial<typeof formValues>) => {
@@ -42,7 +53,7 @@ export default function ReservationForm() {
   };
 
   const handleDateChange = (date: Date) => {
-    handleNextStep({ date: date.toISOString().split("T")[0] });
+    handleNextStep({ date: date.getTime() });
   };
 
   const getTwoHoursLater = (time: string) => {
@@ -60,10 +71,7 @@ export default function ReservationForm() {
     : "";
 
   const handleReservationSubmit = (values: typeof formValues) => {
-    const date = new Date(formValues.date);
-    const [hours, minutes] = formValues.time.split(":").map(Number);
-    date.setHours(hours, minutes);
-
+    const date = new Date(formValues.date);    
     const startTimestamp = date.getTime();
     const endTimestamp = new Date(
       startTimestamp + 2 * 60 * 60 * 1000
@@ -76,7 +84,7 @@ export default function ReservationForm() {
       end: endTimestamp,
       email: values.email,
       phone: values.phone,
-      guestNumber: values.guestNumber,
+      guestNumber: values.guests,
     };
 
     addReservation(reservationData)
@@ -88,6 +96,12 @@ export default function ReservationForm() {
         console.error("Booking failed:", error);
       });
   };
+
+  const availableSlots = getAvailableSlots(
+    formValues.date,
+    formValues.meal,
+    formValues.guests
+  );
 
   return (
     <div className="max-w-md mx-auto w-full p-4">
@@ -116,13 +130,13 @@ export default function ReservationForm() {
 
           <Button
             className="text-lg h-16 pointer"
-            onClick={() => handleNextStep({ meal: "Lunch" })}
+            onClick={() => handleNextStep({ meal: "lunch" })}
           >
             Lunch
           </Button>
           <Button
             className="text-lg h-16 pointer"
-            onClick={() => handleNextStep({ meal: "Middag" })}
+            onClick={() => handleNextStep({ meal: "dinner" })}
           >
             Middag
           </Button>
@@ -140,7 +154,7 @@ export default function ReservationForm() {
             <Button
               key={guest}
               className="text-lg h-16 pointer mb-4"
-              onClick={() => handleNextStep({ guestNumber: guest })}
+              onClick={() => handleNextStep({ guests: guest })}
             >
               {guest} gäster
             </Button>
@@ -155,7 +169,7 @@ export default function ReservationForm() {
           </h3>
           <div className="text-center flex items-center gap-2">
             <Users className="w-5 h-5 " strokeWidth={1} />
-            <span>{formValues.guestNumber} gäster</span>
+            <span>{formValues.guests} gäster</span>
           </div>
           <div className="h-[1px] bg-primary my-4 w-full" />
           <div className="text-center mb-4">Välj dag</div>
@@ -176,7 +190,7 @@ export default function ReservationForm() {
           <div className="flex gap-4 justify-center">
             <div className="text-center flex items-center gap-2">
               <Users className="w-5 h-5 " strokeWidth={1} />
-              <span>{formValues.guestNumber} gäster</span>
+              <span>{formValues.guests} gäster</span>
             </div>
             <div className="text-center flex items-center gap-2">
               <Calendar1 className="w-5 h-5 " strokeWidth={1} />
@@ -203,7 +217,7 @@ export default function ReservationForm() {
           <div className="flex gap-4 justify-center">
             <div className="text-center flex items-center gap-2">
               <Users className="w-5 h-5 " strokeWidth={1} />
-              <span>{formValues.guestNumber} gäster</span>
+              <span>{formValues.guests} gäster</span>
             </div>
             <div className="text-center flex items-center gap-2">
               <Calendar1 className="w-5 h-5 " strokeWidth={1} />
