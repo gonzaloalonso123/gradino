@@ -14,7 +14,7 @@ export default async function Page({ searchParams }: { searchParams: { date?: st
   const { allocatedReservations } = getAllSlots(initialReservations, settings.tables);
 
   return (
-    <div className="min-h-screen bg-background flex w-screen justify-center flex-col items-center">
+    <div className="min-h-screen bg-background flex w-screen xl:justify-center flex-col xl:items-center">
       <h1 className="text-3xl font-bold text-center py-4">Timeline</h1>
       <div className="flex flex-col h-[calc(100vh-5rem)]">
         <div className="flex justify-between items-center px-4 py-2">
