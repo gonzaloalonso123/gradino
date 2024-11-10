@@ -68,10 +68,11 @@ export const getAllSlots = (reservations: Reservation[], tables: Table[]) => {
 			const sortedTables = possibleTables.sort((a, b) => b.numberOfSits - a.numberOfSits);
 
 			for (const possibleTable of sortedTables) {
+				console.log(possibleTable, reservation.tables);
 				if (selectedTable == -1 || guestsToAllocate <= possibleTable.numberOfSits) {
 					selectedTable = possibleTable.id
 				}
-				if (possibleTable.numberOfSits <= guestsToAllocate) {
+				if (possibleTable.numberOfSits <= guestsToAllocate && !reservation.tables.includes(possibleTable.id)) {
 					break;
 				}
 			}

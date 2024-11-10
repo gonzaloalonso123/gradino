@@ -213,25 +213,23 @@ const FormOneInputField = ({ label, name, type, errors, touched }: { label: stri
 );
 
 const Guests = ({ guestNumber }: { guestNumber: number }) => (
-  <div className="text-center flex flex-col md:flex-row items-center gap-2 flex-1">
+  <div className="text-center flex flex-col items-center gap-2 flex-1">
     <Users className="w-5 h-5 " strokeWidth={1} />
     <span>{guestNumber} gäster</span>
   </div>
 );
 
 const SelectedDay = ({ date }: { date: Date }) => (
-  <div className="text-center flex flex-col md:flex-row items-center gap-2 flex-1">
+  <div className="text-center flex flex-col items-center gap-2 flex-1">
     <Calendar1 className="w-5 h-5 " strokeWidth={1} />
     <span>{formatDate(date)}</span>
   </div>
 );
 
 const SelectedTime = ({ slot }: { slot: string }) => (
-  <div className="text-center flex flex-col md:flex-row items-center gap-2 flex-1">
+  <div className="text-center flex flex-col items-center gap-2 flex-1">
     <Clock className="w-5 h-5 " strokeWidth={1} />
-    <span>
-      {slot} - {getTwoHoursLater(slot)}
-    </span>
+    <span>{slot}</span>
   </div>
 );
 
