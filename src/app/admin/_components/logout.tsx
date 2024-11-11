@@ -5,6 +5,7 @@ import { auth } from "@/server/config";
 
 export default () => (
   <Button
+    className="w-full"
     onClick={() => {
       auth.signOut();
     }}

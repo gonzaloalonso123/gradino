@@ -38,25 +38,25 @@ export default function LoginForm() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    if (auth.currentUser) {
-      return router.push("/admin/overview");
-    }
-  }, []);
-
   const submit = (values: LoginFormValues) => {
     setPersistence(auth, browserSessionPersistence)
       .then(async () => {
-        return signInWithEmailAndPassword(auth, values.email, values.password);
+        try {
+          await signInWithEmailAndPassword(auth, values.email, values.password);
+          router.push("/admin/home");
+        } catch (error: any) {
+          const errorMessage = error.message;
+          setLoginError(errorMessage);
+        }
       })
-      .catch((error) => {
+      .catch((error: any) => {
         const errorMessage = error.message;
         setLoginError(errorMessage);
       });
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <div className="w-full h-1/2 max-w-md mx-auto mt-20">
       <CardHeader>
         <CardTitle>Login</CardTitle>
         <CardDescription>
@@ -117,7 +117,7 @@ export default function LoginForm() {
           </Form>
         )}
       </Formik>
-    </Card>
+    </div>
   );
 }
 

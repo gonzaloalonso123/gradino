@@ -4,7 +4,7 @@ import { auth } from "@/server/config";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Logout from "../../_components/logout";
+import Logout from "./logout";
 import { User as FirebaseUser } from "firebase/auth";
 
 const UserManager = () => {
@@ -15,7 +15,6 @@ const UserManager = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        router.push("/admin/overview");
       } else {
         setUser(null);
         router.push("/admin/login");
@@ -25,12 +24,7 @@ const UserManager = () => {
     return () => unsubscribe();
   }, [router]);
 
-  return (
-    <div className="flex items-center gap-10">
-      {user ? user.email : "No user"}
-      {user && <Logout />}
-    </div>
-  );
+  return <div className="flex items-center w-full">{user && <Logout />}</div>;
 };
 
 export default UserManager;

@@ -6,12 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoveLeft, PlusCircle, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getSettings, updateOneSettings } from "@/server/firestore";
 import { DaySchedule, Settings } from "@/types/types";
+import Logout from "../_components/logout";
 
 const defaultSettings: Settings = {
   lunch: {
@@ -39,7 +47,15 @@ const defaultSettings: Settings = {
   ],
 };
 
-const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+const daysOfWeek = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
 
 export default function SettingsPage() {
   const { toast } = useToast();
@@ -62,7 +78,12 @@ export default function SettingsPage() {
     });
   };
 
-  const updateSchedule = (meal: "lunch" | "dinner", day: string, field: keyof DaySchedule, value: number | boolean) => {
+  const updateSchedule = (
+    meal: "lunch" | "dinner",
+    day: string,
+    field: keyof DaySchedule,
+    value: number | boolean
+  ) => {
     const updatedSchedule = {
       ...settings[meal],
       [day]: { ...settings[meal][day], [field]: value },
@@ -77,7 +98,9 @@ export default function SettingsPage() {
 
   const updateTable = (id: number, numberOfSits: string) => {
     let numberOfSitsAsNumber = parseInt(numberOfSits);
-    const updatedTables = settings.tables.map((table) => (table.id === id ? { ...table, numberOfSits: numberOfSitsAsNumber } : table));
+    const updatedTables = settings.tables.map((table) =>
+      table.id === id ? { ...table, numberOfSits: numberOfSitsAsNumber } : table
+    );
     updateSettings("tables", updatedTables);
     console.log(updatedTables);
   };
@@ -89,11 +112,6 @@ export default function SettingsPage() {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold">
-        <MoveLeft className="w-8 h-8 mr-2" onClick={() => history.back()} />
-        Restaurant Settings
-      </h1>
-
       <Card>
         <CardHeader>
           <CardTitle>Schedule Settings</CardTitle>
@@ -105,15 +123,22 @@ export default function SettingsPage() {
               <TabsTrigger value="dinner">Dinner</TabsTrigger>
             </TabsList>
             <TabsContent value="lunch">
-              <ScheduleSettings meal="lunch" settings={settings} updateSchedule={updateSchedule} />
+              <ScheduleSettings
+                meal="lunch"
+                settings={settings}
+                updateSchedule={updateSchedule}
+              />
             </TabsContent>
             <TabsContent value="dinner">
-              <ScheduleSettings meal="dinner" settings={settings} updateSchedule={updateSchedule} />
+              <ScheduleSettings
+                meal="dinner"
+                settings={settings}
+                updateSchedule={updateSchedule}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Slot Duration</CardTitle>
@@ -121,11 +146,20 @@ export default function SettingsPage() {
         <CardContent>
           <div className="flex items-center space-x-2">
             <Label htmlFor="slot-duration">Duration (minutes)</Label>
-            <Input id="slot-duration" type="number" min="5" step="5" value={settings.slotDuration} onChange={(e) => updateSettings("slotDuration", parseInt(e.target.value, 10))} className="w-20" />
+            <Input
+              id="slot-duration"
+              type="number"
+              min="5"
+              step="5"
+              value={settings.slotDuration}
+              onChange={(e) =>
+                updateSettings("slotDuration", parseInt(e.target.value, 10))
+              }
+              className="w-20"
+            />
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Table Management</CardTitle>
@@ -144,10 +178,20 @@ export default function SettingsPage() {
                 <TableRow key={table.id}>
                   <TableCell>{table.id}</TableCell>
                   <TableCell>
-                    <Input type="number" min="1" value={table.numberOfSits} onChange={(e) => updateTable(table.id, e.target.value)} className="w-20" />
+                    <Input
+                      type="number"
+                      min="1"
+                      value={table.numberOfSits}
+                      onChange={(e) => updateTable(table.id, e.target.value)}
+                      className="w-20"
+                    />
                   </TableCell>
                   <TableCell>
-                    <Button variant="destructive" size="sm" onClick={() => deleteTable(table.id)}>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => deleteTable(table.id)}
+                    >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </TableCell>
@@ -160,6 +204,7 @@ export default function SettingsPage() {
           </Button>
         </CardContent>
       </Card>
+      <Logout />
     </div>
   );
 }
@@ -167,19 +212,58 @@ export default function SettingsPage() {
 type ScheduleSettingsProps = {
   meal: "lunch" | "dinner";
   settings: Settings;
-  updateSchedule: (meal: "lunch" | "dinner", day: string, field: keyof DaySchedule, value: number | boolean) => void;
+  updateSchedule: (
+    meal: "lunch" | "dinner",
+    day: string,
+    field: keyof DaySchedule,
+    value: number | boolean
+  ) => void;
 };
 
-function ScheduleSettings({ meal, settings, updateSchedule }: ScheduleSettingsProps) {
+function ScheduleSettings({
+  meal,
+  settings,
+  updateSchedule,
+}: ScheduleSettingsProps) {
   return (
     <div className="space-y-4">
       {daysOfWeek.map((day) => (
         <div key={day} className="flex items-center space-x-4">
           <div className="w-24 font-medium capitalize">{day}</div>
-          <Switch checked={settings[meal][day].opens} onCheckedChange={(checked) => updateSchedule(meal, day, "opens", checked)} />
-          <Input type="number" min="0" max="23" value={settings[meal][day].startTime} onChange={(e) => updateSchedule(meal, day, "startTime", parseInt(e.target.value, 10))} className="w-20" disabled={!settings[meal][day].opens} />
+          <Switch
+            checked={settings[meal][day].opens}
+            onCheckedChange={(checked) =>
+              updateSchedule(meal, day, "opens", checked)
+            }
+          />
+          <Input
+            type="number"
+            min="0"
+            max="23"
+            value={settings[meal][day].startTime}
+            onChange={(e) =>
+              updateSchedule(
+                meal,
+                day,
+                "startTime",
+                parseInt(e.target.value, 10)
+              )
+            }
+            className="w-20"
+            disabled={!settings[meal][day].opens}
+          />
           <span>to</span>
-          <Input type="number" min="0" max="23" value={settings[meal][day].endTime} onChange={(e) => updateSchedule(meal, day, "endTime", parseInt(e.target.value, 10))} className="w-20" disabled={!settings[meal][day].opens} />
+          <Input
+            type="number"
+            min="0"
+            max="23"
+            value={settings[meal][day].endTime}
+            onChange={(e) =>
+              updateSchedule(meal, day, "endTime", parseInt(e.target.value, 10))
+            }
+            className="w-20"
+            disabled={!settings[meal][day].opens}
+          />
         </div>
       ))}
     </div>
