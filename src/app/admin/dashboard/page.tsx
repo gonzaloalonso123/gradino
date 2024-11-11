@@ -22,8 +22,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen w-full  dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
+      <main className="max-w-7xl mx-auto py-28 lg:py-8 sm:px-6 lg:px-8">
+        <h1 className="font-bold text-2xl mb-10 hidden lg:flex">Dashboard</h1>
+
+        <div className="px-4 sm:px-0">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

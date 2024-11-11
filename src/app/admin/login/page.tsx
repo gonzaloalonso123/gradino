@@ -43,7 +43,7 @@ export default function LoginForm() {
       .then(async () => {
         try {
           await signInWithEmailAndPassword(auth, values.email, values.password);
-          router.push("/admin/home");
+          router.push("/admin/dashboard");
         } catch (error: any) {
           const errorMessage = error.message;
           setLoginError(errorMessage);

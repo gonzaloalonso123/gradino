@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function Header() {
+export default function () {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("home");

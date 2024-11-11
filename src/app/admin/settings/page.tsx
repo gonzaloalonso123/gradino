@@ -111,100 +111,107 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Schedule Settings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="lunch">
-            <TabsList>
-              <TabsTrigger value="lunch">Lunch</TabsTrigger>
-              <TabsTrigger value="dinner">Dinner</TabsTrigger>
-            </TabsList>
-            <TabsContent value="lunch">
-              <ScheduleSettings
-                meal="lunch"
-                settings={settings}
-                updateSchedule={updateSchedule}
-              />
-            </TabsContent>
-            <TabsContent value="dinner">
-              <ScheduleSettings
-                meal="dinner"
-                settings={settings}
-                updateSchedule={updateSchedule}
-              />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Slot Duration</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center space-x-2">
-            <Label htmlFor="slot-duration">Duration (minutes)</Label>
-            <Input
-              id="slot-duration"
-              type="number"
-              min="5"
-              step="5"
-              value={settings.slotDuration}
-              onChange={(e) =>
-                updateSettings("slotDuration", parseInt(e.target.value, 10))
-              }
-              className="w-20"
-            />
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Table Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Table ID</TableHead>
-                <TableHead>Number of Seats</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {settings.tables.map((table) => (
-                <TableRow key={table.id}>
-                  <TableCell>{table.id}</TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={table.numberOfSits}
-                      onChange={(e) => updateTable(table.id, e.target.value)}
-                      className="w-20"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => deleteTable(table.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Button onClick={addTable} className="mt-4">
-            <PlusCircle className="w-4 h-4 mr-2" /> Add Table
-          </Button>
-        </CardContent>
-      </Card>
-      <Logout />
+    <div className="min-h-screen w-full  dark:bg-gray-900">
+      <main className="max-w-7xl mx-auto py-28 px-4 lg:py-8  lg:px-8 ">
+        <h1 className="font-bold text-2xl mb-10 hidden lg:flex">Settings</h1>
+        <div className="flex flex-col lg:flex-row gap-4 w-full">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Schedule Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="lunch">
+                <TabsList>
+                  <TabsTrigger value="lunch">Lunch</TabsTrigger>
+                  <TabsTrigger value="dinner">Dinner</TabsTrigger>
+                </TabsList>
+                <TabsContent value="lunch">
+                  <ScheduleSettings
+                    meal="lunch"
+                    settings={settings}
+                    updateSchedule={updateSchedule}
+                  />
+                </TabsContent>
+                <TabsContent value="dinner">
+                  <ScheduleSettings
+                    meal="dinner"
+                    settings={settings}
+                    updateSchedule={updateSchedule}
+                  />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+          {/* <Card>
+            <CardHeader>
+              <CardTitle>Slot Duration</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="slot-duration">Duration (minutes)</Label>
+                <Input
+                  id="slot-duration"
+                  type="number"
+                  min="5"
+                  step="5"
+                  value={settings.slotDuration}
+                  onChange={(e) =>
+                    updateSettings("slotDuration", parseInt(e.target.value, 10))
+                  }
+                  className="w-20"
+                />
+              </div>
+            </CardContent>
+          </Card> */}
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Table Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Table ID</TableHead>
+                    <TableHead>Number of Seats</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {settings.tables.map((table) => (
+                    <TableRow key={table.id}>
+                      <TableCell>{table.id}</TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={table.numberOfSits}
+                          onChange={(e) =>
+                            updateTable(table.id, e.target.value)
+                          }
+                          className="w-20"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => deleteTable(table.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <Button onClick={addTable} className="mt-4">
+                <PlusCircle className="w-4 h-4 mr-2" /> Add Table
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <Logout />
+      </main>
     </div>
   );
 }

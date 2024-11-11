@@ -2,7 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 
-export default function Footer() {
+export default function () {
   return (
     <footer className="bg-white text-black py-12">
       <div className="container mx-auto px-6">
