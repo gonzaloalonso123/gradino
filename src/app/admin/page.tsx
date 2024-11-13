@@ -20,9 +20,8 @@ export default function page() {
     setIsPWAInstalled(true);
   };
 
-
   return (
-    <div className="min-h-screen  dark:bg-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen w-full  dark:bg-gray-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">

@@ -21,12 +21,12 @@ export default async function Page({
   );
 
   return (
-    <div className="min-h-screen w-full  dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto py-28 lg:py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen  w-full dark:bg-gray-900">
+      <main className="max-w-7xl mx-auto py-28 lg:py-8 sm:px-6 lg:px-8 ">
         <h1 className="font-bold text-2xl mb-10 hidden lg:flex">
           Reservations
         </h1>
-        <div className="flex flex-col h-[calc(100vh-5rem)]">
+        <div className="flex flex-col ">
           <div className="flex flex-col justify-between items-center px-4 py-2">
             <Suspense fallback={<div>Loading selector...</div>}>
               <DateScheduleSelector
@@ -35,7 +35,7 @@ export default async function Page({
               />
             </Suspense>
           </div>
-          <div className="flex-1 p-4 overflow-auto">
+          <div className="flex-1 m-4">
             <Suspense fallback={<div>Loading timeline...</div>}>
               <TimelineWrapper
                 initialReservations={allocatedReservations}

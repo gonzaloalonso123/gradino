@@ -115,7 +115,7 @@ export default function SettingsPage() {
       <main className="max-w-7xl mx-auto py-28 px-4 lg:py-8  lg:px-8 ">
         <h1 className="font-bold text-2xl mb-10 hidden lg:flex">Settings</h1>
         <div className="flex flex-col lg:flex-row gap-4 w-full">
-          <Card className="w-full">
+          <Card className="w-full h-fit">
             <CardHeader>
               <CardTitle>Schedule Settings</CardTitle>
             </CardHeader>

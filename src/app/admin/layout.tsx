@@ -24,9 +24,9 @@ export default ({ children }: { children: React.ReactNode }) => {
         }
       }
     });
-
     return () => unsubscribe();
   }, [router]);
+  
   return (
     <div className="flex relative">
       <Header />

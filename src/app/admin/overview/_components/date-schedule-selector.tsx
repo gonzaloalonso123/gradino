@@ -53,7 +53,7 @@ export default function DateScheduleSelector({
   };
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex flex-col lg:flex-row gap-4 items-center justify-center lg:justify-end w-full ">
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -74,7 +74,7 @@ export default function DateScheduleSelector({
         </PopoverContent>
       </Popover>
       <Select value={schedule} onValueChange={handleScheduleChange}>
-        <SelectTrigger className="w-[120px]">
+        <SelectTrigger className="w-[240px]">
           <SelectValue placeholder="Select schedule" />
         </SelectTrigger>
         <SelectContent>
