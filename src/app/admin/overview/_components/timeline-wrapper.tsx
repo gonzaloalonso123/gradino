@@ -1,18 +1,15 @@
 import { getAllSlots } from "@/helpers/helpers";
-import { getReservations } from "@/server/firestore";
-import { parseISO } from "date-fns";
 import Timeline from "./timeline";
+import { getReservations } from "@/app/actions/firebase-actions";
+import { Params } from "./date-schedule-selector";
+import { Reservation } from "@/types/types";
 
-export default async function TimelineWrapper({ initialReservations, tables, searchParams }: { initialReservations: any[]; tables: any[]; searchParams: { date?: string; schedule?: "lunch" | "dinner" } }) {
-  const { date: dateParam, schedule: scheduleParam } = searchParams;
-  let reservations = initialReservations;
+export default async function TimelineWrapper({ settings, reservations, searchParams }: { settings: any; searchParams: Params; reservations: Reservation[] }) {
+  const { date, schedule } = searchParams;
+  const tables = settings.tables;
+  const dayOfWeek = new Date(date).toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+  const scheduleSettings = settings[schedule][dayOfWeek];
+  const { allocatedReservations } = getAllSlots(reservations, tables);
 
-  if (dateParam && scheduleParam) {
-    const date = parseISO(dateParam);
-    const newReservations = await getReservations(date, scheduleParam);
-    const { allocatedReservations } = getAllSlots(newReservations, tables);
-    reservations = allocatedReservations;
-  }
-
-  return <Timeline reservations={reservations} tables={tables} startingHour={scheduleParam === "lunch" ? 11 : 15} endingHour={scheduleParam === "lunch" ? 15 : 23} interval={15} date={dateParam || ""} />;
+  return <Timeline reservations={allocatedReservations} tables={tables} startingHour={scheduleSettings.startTime} endingHour={scheduleSettings.endTime} interval={settings.slotDuration} date={new Date(date)} />;
 }

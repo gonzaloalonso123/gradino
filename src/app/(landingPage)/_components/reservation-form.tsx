@@ -6,18 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { addReservation, getAvailableSlots } from "../../../server/firestore";
-import {
-  MoveLeft,
-  Calendar1,
-  CircleCheck,
-  Clock,
-  Users,
-  Loader2,
-  Utensils,
-} from "lucide-react";
+import { MoveLeft, Calendar1, CircleCheck, Clock, Users, Loader2, Utensils } from "lucide-react";
 import { Reservation } from "@/types/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { addReservation, getAvailableSlots } from "@/app/actions/firebase-actions";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -90,11 +82,7 @@ export default function ReservationForm() {
 
   useEffect(() => {
     if (step === 4) {
-      getAvailableSlots(
-        formValues.date,
-        formValues.schedule,
-        formValues.guestNumber
-      ).then((availableSlots) => {
+      getAvailableSlots(formValues.date, formValues.schedule, formValues.guestNumber).then((availableSlots) => {
         setAvailableSlots(availableSlots);
       });
     }
@@ -111,37 +99,23 @@ export default function ReservationForm() {
     <div className="max-w-md mx-auto w-full p-4">
       <div className="flex items-center ">
         {step > 1 && step < 6 && (
-          <Button
-            className="absolute h-8 w-8 top-4 left-4 "
-            onClick={handlePrevStep}
-          >
+          <Button className="absolute h-8 w-8 top-4 left-4 " onClick={handlePrevStep}>
             <MoveLeft className="w-5 h-5 " strokeWidth={1} />
           </Button>
         )}
-        <h2 className="text-3xl font-extrabold mb-2 text-center w-full text-primary">
-          Il Gradino
-        </h2>
+        <h2 className="text-3xl font-extrabold mb-2 text-center w-full text-primary">Il Gradino</h2>
       </div>
       <div className="h-[1px] bg-primary mb-4" />
 
       {step === 1 && (
         <div className="space-y-4 flex flex-col justify-start text-left">
-          <div className="text-center ">
-            Är ni fler än 5 personer vänligen ring 08-660 76 94 eller maila
-            till: ciao@montanari.se. Benvenuti!
-          </div>
+          <div className="text-center ">Är ni fler än 5 personer vänligen ring 08-660 76 94 eller maila till: ciao@montanari.se. Benvenuti!</div>
           <div className="h-[1px] bg-primary my-4" />
 
-          <Button
-            className="text-lg h-16 pointer"
-            onClick={() => handleNextStep({ schedule: "lunch" })}
-          >
+          <Button className="text-lg h-16 pointer" onClick={() => handleNextStep({ schedule: "lunch" })}>
             Lunch
           </Button>
-          <Button
-            className="text-lg h-16 pointer"
-            onClick={() => handleNextStep({ schedule: "dinner" })}
-          >
+          <Button className="text-lg h-16 pointer" onClick={() => handleNextStep({ schedule: "dinner" })}>
             Middag
           </Button>
         </div>
@@ -155,11 +129,7 @@ export default function ReservationForm() {
           <div className="h-[1px] bg-primary my-4" />
           <FormOnePageTitle title="Välj antal personer" />
           {[1, 2, 3, 4, 5].map((guest) => (
-            <Button
-              key={guest}
-              className="text-lg h-16 pointer mb-4"
-              onClick={() => handleNextStep({ guestNumber: guest })}
-            >
+            <Button key={guest} className="text-lg h-16 pointer mb-4" onClick={() => handleNextStep({ guestNumber: guest })}>
               {guest} gäster
             </Button>
           ))}
@@ -174,13 +144,7 @@ export default function ReservationForm() {
           </div>
           <div className="h-[1px] bg-primary my-4 w-full" />
           <div className="text-center mb-4">Välj dag</div>
-          <Calendar
-            onClickDay={(date) => handleNextStep({ date: date })}
-            value={formValues.date || new Date()}
-            minDate={new Date()}
-            locale="sv"
-            className="border p-2 rounded w-full"
-          />
+          <Calendar onClickDay={(date) => handleNextStep({ date: date })} value={formValues.date || new Date()} minDate={new Date()} locale="sv" className="border p-2 rounded w-full" />
         </div>
       )}
 
@@ -196,10 +160,7 @@ export default function ReservationForm() {
           <div className="flex justify-center gap-2 flex-row flex-wrap">
             {availableSlots ? (
               availableSlots?.map((time, i) => (
-                <Button
-                  key={i}
-                  onClick={() => handleNextStep({ slot: toSwedishTime(time) })}
-                >
+                <Button key={i} onClick={() => handleNextStep({ slot: toSwedishTime(time) })}>
                   {toSwedishTime(time)}
                 </Button>
               ))
@@ -220,53 +181,15 @@ export default function ReservationForm() {
           </div>
           <div className="h-[1px] bg-primary my-4 w-full" />
           <FormOnePageTitle title="Kontakt informatiun" />
-          <Formik
-            initialValues={formValues}
-            validationSchema={validationSchema}
-            onSubmit={handleReservationSubmit}
-          >
+          <Formik initialValues={formValues} validationSchema={validationSchema} onSubmit={handleReservationSubmit}>
             {({ errors, touched }) => (
               <Form className="space-y-4">
-                <FormOneInputField
-                  label="Name"
-                  name="name"
-                  type="text"
-                  errors={errors}
-                  touched={touched}
-                />
-                <FormOneInputField
-                  label="Surname"
-                  name="surname"
-                  type="text"
-                  errors={errors}
-                  touched={touched}
-                />
-                <FormOneInputField
-                  label="Email"
-                  name="email"
-                  type="email"
-                  errors={errors}
-                  touched={touched}
-                />
-                <FormOneInputField
-                  label="Phone"
-                  name="phone"
-                  type="text"
-                  errors={errors}
-                  touched={touched}
-                />
-                <FormOneInputField
-                  label="Message"
-                  name="message"
-                  type="text"
-                  errors={errors}
-                  touched={touched}
-                />
-                <Button
-                  type="submit"
-                  className="h-12 w-full text-lg"
-                  disabled={submitLoading}
-                >
+                <FormOneInputField label="Name" name="name" type="text" errors={errors} touched={touched} />
+                <FormOneInputField label="Surname" name="surname" type="text" errors={errors} touched={touched} />
+                <FormOneInputField label="Email" name="email" type="email" errors={errors} touched={touched} />
+                <FormOneInputField label="Phone" name="phone" type="text" errors={errors} touched={touched} />
+                <FormOneInputField label="Message" name="message" type="text" errors={errors} touched={touched} />
+                <Button type="submit" className="h-12 w-full text-lg" disabled={submitLoading}>
                   {submitLoading && <Loader2 className="animate-spin" />}
                   Boka
                 </Button>
@@ -279,37 +202,19 @@ export default function ReservationForm() {
       {step === 6 && (
         <div className="flex flex-col justify-center items-center text-center mt-20 ">
           <CircleCheck className="text-primary h-16 w-16" />
-          <h3 className="text-2xl font-semibold text-primary">
-            Bokning Bekräftad!
-          </h3>
-          <p className="text-gray-600 mt-2">
-            Grazie för din reservation. Benvenuti!!
-          </p>
+          <h3 className="text-2xl font-semibold text-primary">Bokning Bekräftad!</h3>
+          <p className="text-gray-600 mt-2">Grazie för din reservation. Benvenuti!!</p>
         </div>
       )}
     </div>
   );
 }
 
-const FormOneInputField = ({
-  label,
-  name,
-  type,
-  errors,
-  touched,
-}: {
-  label: string;
-  name: string;
-  type: string;
-  errors: any;
-  touched: any;
-}) => (
+const FormOneInputField = ({ label, name, type, errors, touched }: { label: string; name: string; type: string; errors: any; touched: any }) => (
   <div>
     <Label htmlFor={name}>{label} *</Label>
     <Field as={Input} id={name} name={name} type={type} />
-    {errors[name] && touched[name] && (
-      <div className="text-red-500 text-sm mt-1">{errors[name]}</div>
-    )}
+    {errors[name] && touched[name] && <div className="text-red-500 text-sm mt-1">{errors[name]}</div>}
   </div>
 );
 
@@ -354,9 +259,7 @@ const getTwoHoursLater = (time: string) => {
   return date.toTimeString().slice(0, 5);
 };
 
-const FormOnePageTitle = ({ title }: { title: string }) => (
-  <div className="text-center mb-4">{title}</div>
-);
+const FormOnePageTitle = ({ title }: { title: string }) => <div className="text-center mb-4">{title}</div>;
 
 const scheduleInSwedish: {
   [key: string]: string;

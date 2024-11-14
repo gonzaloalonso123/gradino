@@ -1,47 +1,34 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { SettingsIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { getReservations, getSettings } from "@/server/firestore";
-import { getAllSlots } from "@/helpers/helpers";
 import DateScheduleSelector from "./_components/date-schedule-selector";
 import TimelineWrapper from "./_components/timeline-wrapper";
+import { getReservations, getSettings } from "@/app/actions/firebase-actions";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { date?: string; schedule?: "lunch" | "dinner" };
-}) {
-  const today = new Date();
+type ReservationsPageProps = {
+  date: string | null;
+  schedule: "lunch" | "dinner";
+};
+
+export default async function ReservationsPage({ searchParams }: { searchParams: ReservationsPageProps }) {
+  const { date, schedule } = searchParams;
+  console.log(searchParams);
+
+  const parsedDate = date ?? new Date().toISOString().split("T")[0];
+  const parsedSchedule = schedule || "dinner";
   const settings = await getSettings();
-  const initialReservations = await getReservations(today, "dinner");
-  const { allocatedReservations } = getAllSlots(
-    initialReservations,
-    settings.tables
-  );
+  const reservations = await getReservations(date ? new Date(date) : new Date(), schedule || "dinner");
+
 
   return (
-    <div className="min-h-screen  w-full dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto py-28 lg:py-8 sm:px-6 lg:px-8 ">
-        <h1 className="font-bold text-2xl mb-10 hidden lg:flex">
-          Reservations
-        </h1>
-        <div className="flex flex-col ">
-          <div className="flex flex-col justify-between items-center px-4 py-2">
-            <Suspense fallback={<div>Loading selector...</div>}>
-              <DateScheduleSelector
-                initialDate={today}
-                initialSchedule="dinner"
-              />
-            </Suspense>
-          </div>
+    <div className="min-h-screen w-full dark:bg-gray-900">
+      <main className="max-w-7xl mx-auto py-28 lg:py-8 sm:px-6 lg:px-8">
+        <h1 className="font-bold text-2xl mb-10 hidden lg:flex">Reservations</h1>
+        <div className="flex flex-col">
+          <Suspense fallback={<div>Loading selector...</div>}>
+            <DateScheduleSelector />
+          </Suspense>
           <div className="flex-1 m-4">
             <Suspense fallback={<div>Loading timeline...</div>}>
-              <TimelineWrapper
-                initialReservations={allocatedReservations}
-                tables={settings.tables}
-                searchParams={searchParams}
-              />
+              <TimelineWrapper settings={settings} reservations={reservations} searchParams={{ date: parsedDate, schedule: parsedSchedule }} />
             </Suspense>
           </div>
         </div>

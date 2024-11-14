@@ -17,9 +17,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoveLeft, PlusCircle, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getSettings, updateOneSettings } from "@/server/firestore";
 import { DaySchedule, Settings } from "@/types/types";
 import Logout from "../_components/logout";
+import { getSettings, updateOneSettings } from "@/app/actions/firebase-actions";
 
 const defaultSettings: Settings = {
   lunch: {
