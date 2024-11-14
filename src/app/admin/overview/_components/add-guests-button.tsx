@@ -22,12 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { addReservation } from "@/app/actions/firebase-actions";
 
 export default function AddGuestButton() {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     schedule: "dinner",
-    guestNumber: "",
+    guestNumber: 0,
     date: "",
     time: "",
     name: "",
@@ -65,11 +66,26 @@ export default function AddGuestButton() {
     setFormData((prevData) => ({ ...prevData, time: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("Form submitted", formData);
-    setOpen(false);
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+
+  const startTime = new Date(`${formData.date}T${formData.time}`);
+  const endTime = new Date(startTime);
+  endTime.setHours(startTime.getHours() + 2); // Example duration: 2 hours
+
+  // Convert to timestamps
+  const fullReservationData = {
+    ...formData,
+    start: startTime.getTime(), // Convert start time to timestamp
+    end: endTime.getTime(), // Convert end time to timestamp
   };
+
+  await addReservation(fullReservationData);
+  console.log("Form submitted", fullReservationData);
+  setOpen(false);
+};
+
+
 
   const generateTimeOptions = () => {
     const options = [];

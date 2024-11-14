@@ -26,8 +26,9 @@ export default async function ReservationsPage({
   );
 
   const totalGuestCount = reservations.reduce((sum, reservation) => {
-    return sum + (reservation.guestNumber || 0);
+    return sum + (Number(reservation.guestNumber) || 0);
   }, 0);
+
   return (
     <div className="min-h-screen w-full dark:bg-gray-900">
       <main className="max-w-7xl mx-auto py-28 lg:py-8 sm:px-6 lg:px-8">

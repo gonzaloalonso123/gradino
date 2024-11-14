@@ -27,6 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteReservation } from "@/app/actions/firebase-actions";
 
 const CELL_WIDTH = 40;
 const CELL_HEIGHT = 40;
@@ -255,7 +256,7 @@ const ReservationBlock = ({ reservation }: { reservation: any }) => (
               <Edit className="mr-2 h-4 w-4" />
               <span>Edit</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => deleteReservation(reservation.id)}>
               <Delete className="mr-2 h-4 w-4" />
               <span>Delete</span>
             </DropdownMenuItem>
