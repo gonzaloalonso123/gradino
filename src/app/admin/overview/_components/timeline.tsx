@@ -3,9 +3,30 @@
 import { useMemo } from "react";
 import { differenceInMinutes, format } from "date-fns";
 import { Reservation, Table } from "@/types/types";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Delete, Edit, User } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Clock,
+  Delete,
+  Edit,
+  Mail,
+  MessageSquareText,
+  Phone,
+  User,
+  Users,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const CELL_WIDTH = 40;
 const CELL_HEIGHT = 40;
@@ -19,21 +40,47 @@ const generateRandomColor = () => {
   return color;
 };
 
-export default function Timeline({ reservations, tables, startingHour, endingHour, interval, date }: { reservations: Reservation[]; tables: Table[]; startingHour: number; endingHour: number; interval: number; date: Date }) {
+export default function Timeline({
+  reservations,
+  tables,
+  startingHour,
+  endingHour,
+  interval,
+  date,
+}: {
+  reservations: Reservation[];
+  tables: Table[];
+  startingHour: number;
+  endingHour: number;
+  interval: number;
+  date: Date;
+}) {
   const startOfTimeline = date;
   startOfTimeline.setHours(startingHour, 0, 0, 0);
   const hours = endingHour - startingHour;
 
   const timeTables = useMemo(() => {
-    return Array.from({ length: (hours * 60) / interval }, (_, i) => new Date(startOfTimeline.getTime() + i * interval * 60000));
+    return Array.from(
+      { length: (hours * 60) / interval },
+      (_, i) => new Date(startOfTimeline.getTime() + i * interval * 60000)
+    );
   }, [startOfTimeline, hours, interval]);
 
   const reservationPositions = useMemo(() => {
     return reservations.flatMap((reservation) => {
-      const color = (reservation.tables?.length ?? 1) > 1 ? generateRandomColor() : "#0000bb";
+      const color =
+        (reservation.tables?.length ?? 1) > 1
+          ? generateRandomColor()
+          : "#0000bb";
       return (reservation.tables ?? []).map((table) => {
-        const startMinutes = differenceInMinutes(new Date(reservation.start), startOfTimeline);
-        const duration = differenceInMinutes(new Date(reservation.end), new Date(reservation.start));
+        const startMinutes = differenceInMinutes(
+          new Date(reservation.start),
+          startOfTimeline
+        );
+        const duration = differenceInMinutes(
+          new Date(reservation.end),
+          new Date(reservation.start)
+        );
         return {
           ...reservation,
           left: (startMinutes / interval) * CELL_WIDTH + 5,
@@ -52,7 +99,7 @@ export default function Timeline({ reservations, tables, startingHour, endingHou
   }, [startOfTimeline, interval]);
 
   return (
-    <div className="flex flex-col h-[500px] lg:h-[600px]">
+    <div className="flex flex-col lg:justify-end lg:items-start w-full h-[500px] lg:h-[600px]">
       <div className="flex-grow overflow-auto hide-scrollbar ">
         <div className="inline-block min-w-fit">
           <div className="sticky top-0 z-30 bg-background">
@@ -83,7 +130,11 @@ const Header = ({ timeTables }: { timeTables: Date[] }) => (
     {timeTables.map(
       (time, index) =>
         index % 4 === 0 && (
-          <div key={index} className="flex-shrink-0 border-r text-xs flex items-center justify-center font-bold text-primary-foreground" style={{ width: CELL_WIDTH * 4 }}>
+          <div
+            key={index}
+            className="flex-shrink-0 border-r text-xs flex items-center justify-center font-bold text-primary-foreground"
+            style={{ width: CELL_WIDTH * 4 }}
+          >
             {format(time, "HH:mm")}
           </div>
         )
@@ -91,7 +142,11 @@ const Header = ({ timeTables }: { timeTables: Date[] }) => (
   </div>
 );
 
-const CurrentTimeLine = ({ currentTimePosition }: { currentTimePosition: number }) => {
+const CurrentTimeLine = ({
+  currentTimePosition,
+}: {
+  currentTimePosition: number;
+}) => {
   return (
     <div
       className="absolute bg-destructive text-destructive-foreground text-xs overflow-hidden rounded"
@@ -102,7 +157,9 @@ const CurrentTimeLine = ({ currentTimePosition }: { currentTimePosition: number 
         height: "100%",
       }}
     >
-      <div className="transform -rotate-90 origin-left translate-y-2">{format(new Date(), "HH:mm")}</div>
+      <div className="transform -rotate-90 origin-left translate-y-2">
+        {format(new Date(), "HH:mm")}
+      </div>
     </div>
   );
 };
@@ -110,7 +167,10 @@ const CurrentTimeLine = ({ currentTimePosition }: { currentTimePosition: number 
 const Sider = ({ tables }: { tables: Table[] }) => (
   <div className="flex-shrink-0 w-10">
     {tables.map((table) => (
-      <div key={table.id} className="h-10 border-b border-r flex items-center gap-2 justify-center bg-primary">
+      <div
+        key={table.id}
+        className="h-10 border-b border-r flex items-center gap-2 justify-center bg-primary"
+      >
         {table.id}
         <label className="text-primary-foreground flex flex-col justify-center items-center text-xs">
           <User size={10} />
@@ -121,12 +181,22 @@ const Sider = ({ tables }: { tables: Table[] }) => (
   </div>
 );
 
-const Cells = ({ timeTables, Tables }: { timeTables: Date[]; Tables: Table[] }) => (
+const Cells = ({
+  timeTables,
+  Tables,
+}: {
+  timeTables: Date[];
+  Tables: Table[];
+}) => (
   <div>
     {Tables.map((table) => (
       <div key={table.id} className="flex h-10">
         {timeTables.map((time, index) => (
-          <div key={index} className="flex-shrink-0 border-r border-b" style={{ width: CELL_WIDTH }}></div>
+          <div
+            key={index}
+            className="flex-shrink-0 border-r border-b"
+            style={{ width: CELL_WIDTH }}
+          ></div>
         ))}
       </div>
     ))}
@@ -159,6 +229,28 @@ const ReservationBlock = ({ reservation }: { reservation: any }) => (
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>{`${reservation.name} ${reservation.surname}`}</DropdownMenuLabel>
             <DropdownMenuSeparator />
+
+            <DropdownMenuItem className="flex items-center gap-2">
+              <Users size={16} /> {reservation.guestNumber}
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex items-center gap-2">
+              <Mail size={16} /> {reservation.email}
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex items-center gap-2">
+              <Phone size={16} /> {reservation.phone}
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex items-center gap-2">
+              <Clock size={16} />{" "}
+              {new Date(reservation.start).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex items-center gap-2">
+              <MessageSquareText size={16} />
+              {reservation.message}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Edit className="mr-2 h-4 w-4" />
               <span>Edit</span>
@@ -175,7 +267,8 @@ const ReservationBlock = ({ reservation }: { reservation: any }) => (
           <strong>{reservation.name}</strong>
         </p>
         <p>
-          Time: {format(new Date(reservation.start), "HH:mm")} - {format(new Date(reservation.end), "HH:mm")}
+          Time: {format(new Date(reservation.start), "HH:mm")} -{" "}
+          {format(new Date(reservation.end), "HH:mm")}
         </p>
         <p>Guests: {reservation.guestNumber}</p>
         <p>Email: {reservation.email}</p>

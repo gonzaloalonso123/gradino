@@ -2,10 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
@@ -40,19 +50,30 @@ export default function DateScheduleSelector() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 items-center justify-center lg:justify-end w-full ">
+    <div className="flex flex-col lg:flex-row gap-4 items-center justify-center lg:justify-start w-full ">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-[240px] justify-start text-left font-normal">
+          <Button
+            variant="outline"
+            className="w-[240px] justify-start text-left font-normal"
+          >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {new Date(params.date).toLocaleDateString()}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <Calendar mode="single" selected={new Date(params.date)} onSelect={handleChangeDate} initialFocus />
+          <Calendar
+            mode="single"
+            selected={new Date(params.date)}
+            onSelect={handleChangeDate}
+            initialFocus
+          />
         </PopoverContent>
       </Popover>
-      <Select value={params.schedule} onValueChange={(value) => updateParam("schedule", value)}>
+      <Select
+        value={params.schedule}
+        onValueChange={(value) => updateParam("schedule", value)}
+      >
         <SelectTrigger className="w-[240px]">
           <SelectValue placeholder="Select schedule" />
         </SelectTrigger>
