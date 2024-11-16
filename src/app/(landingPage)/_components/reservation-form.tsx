@@ -10,6 +10,7 @@ import { MoveLeft, Calendar1, CircleCheck, Clock, Users, Loader2, Utensils } fro
 import { Reservation } from "@/types/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { addReservation, getAvailableSlots } from "@/app/actions/firebase-actions";
+import { toSwedishTime } from "@/helpers/helpers";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -19,7 +20,7 @@ const validationSchema = Yup.object().shape({
   message: Yup.string().optional(),
 });
 
-type NewReservationType = {
+export type NewReservationType = {
   guestNumber: number;
   schedule: "lunch" | "dinner";
   name: string;
@@ -87,13 +88,6 @@ export default function ReservationForm() {
       });
     }
   }, [step]);
-
-  const toSwedishTime = (date: Date) => {
-    return date.toLocaleTimeString("sv-SE", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <div className="max-w-md mx-auto w-full p-4">

@@ -1,7 +1,8 @@
-import { Reservation, Table } from "@/types/types";
+import { Reservation, SlottedReservation, Table } from "@/types/types";
 import { addHours } from "date-fns";
 
-export const getTimeSlotsAvailable = (reservations: Reservation[], tables: Table[], openingTime: number, closingTime: number, interval: number, guestNumber: number) => {
+export const getTimeSlotsAvailable = (opens: boolean, reservations: Reservation[], tables: Table[], openingTime: number, closingTime: number, interval: number, guestNumber: number) => {
+	if (!opens) return [];
 	const startOfTimeline = new Date();
 	startOfTimeline.setHours(openingTime, 0, 0, 0);
 	const timeSlots = Array.from({ length: (closingTime - 2 - openingTime) * 60 / interval }, (_, i) => new Date(startOfTimeline.getTime() + i * interval * 60000));
@@ -27,6 +28,13 @@ export const getTimeSlotsAvailable = (reservations: Reservation[], tables: Table
 
 
 type PartialReservation = { start: number, end: number, guestNumber: number };
+
+function addTablesToReservation(reservation: Reservation, tables: number[]): SlottedReservation {
+	return {
+		...reservation,
+		tables,
+	};
+}
 
 export const getSlotsForReservation = (reservation: Reservation | PartialReservation, tables: Table[]) => {
 	let thereIsATable = true;
@@ -55,39 +63,32 @@ export const getSlotsForReservation = (reservation: Reservation | PartialReserva
 export const getAllSlots = (reservations: Reservation[], tables: Table[]) => {
 	tables = tables.map(table => ({ ...table, reservations: [] }));
 	const allocatedReservations = reservations.map((reservation) => {
-		reservation.tables = [];
-
+		const slottedReservation = addTablesToReservation(reservation, []);
 		const { thereIsATable, possibleTables } = getSlotsForReservation(reservation, tables);
 		if (!thereIsATable) return reservation;
-
 		let guestsToAllocate = reservation.guestNumber;
-
+		const sortedTables = possibleTables.sort((a, b) => b.numberOfSits - a.numberOfSits);
 		while (guestsToAllocate > 0) {
-			let selectedTable = -1;
-
-			const sortedTables = possibleTables.sort((a, b) => b.numberOfSits - a.numberOfSits);
-
+			let selectedTable = possibleTables.find(table => !slottedReservation.tables?.includes(table.id)) || possibleTables[0];
 			for (const possibleTable of sortedTables) {
-				console.log(possibleTable, reservation.tables);
-				if (selectedTable == -1 || guestsToAllocate <= possibleTable.numberOfSits) {
-					selectedTable = possibleTable.id
+				if (!slottedReservation.tables.includes(possibleTable.id)) {
+					selectedTable = possibleTable
 				}
-				if (possibleTable.numberOfSits <= guestsToAllocate && !reservation.tables.includes(possibleTable.id)) {
+				if (selectedTable.numberOfSits <= guestsToAllocate) {
 					break;
 				}
 			}
 
-			if (selectedTable !== -1) {
-				const table = possibleTables.find(table => table.id === selectedTable);
-				table?.reservations?.push(reservation);
-				guestsToAllocate -= table?.numberOfSits ?? 0;
-				reservation.tables.push(selectedTable);
+			if (selectedTable) {
+				selectedTable?.reservations?.push(slottedReservation);
+				guestsToAllocate -= selectedTable?.numberOfSits ?? 0;
+				slottedReservation.tables.push(selectedTable.id);
 			} else {
-				console.log(reservation, 'doesnt have a table')
+				console.log(slottedReservation, 'doesnt have a table')
 				break;
 			}
 		}
-		return reservation;
+		return slottedReservation;
 	});
 
 	return { tables, allocatedReservations };
@@ -95,3 +96,11 @@ export const getAllSlots = (reservations: Reservation[], tables: Table[]) => {
 
 const timesDontColide = (aStart: number, aEnd: number, bStart: number, bEnd: number) =>
 	aEnd <= bStart || aStart >= bEnd;
+
+
+export const toSwedishTime = (date: Date) => {
+	return date.toLocaleTimeString("sv-SE", {
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+};

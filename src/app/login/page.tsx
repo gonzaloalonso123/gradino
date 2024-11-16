@@ -27,17 +27,37 @@ export default function LoginForm() {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    if (auth.currentUser) {
+      router.push("/admin/dashboard");
+    }
+  }, []);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      router.push("/admin/dashboard");
+    }
+
+    const unsubscribeAuthState = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdToken();
         setAuthCookie(token);
         router.push("/admin/dashboard");
       }
     });
+
+    const unsubscribeTokenChange = auth.onIdTokenChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setAuthCookie(token);
+      }
+    });
+
     return () => {
-      unsubscribe();
+      unsubscribeAuthState();
+      unsubscribeTokenChange();
     };
-  }, []);
+  }, [router]);
 
   const submit = (values: LoginFormValues) => {
     setPersistence(auth, browserSessionPersistence)

@@ -2,107 +2,83 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { addReservation } from "@/app/actions/firebase-actions";
+import { Calendar } from "@/components/ui/calendar";
+import { addReservation, getAvailableSlots } from "@/app/actions/firebase-actions";
+import { NewReservationType } from "@/app/(landingPage)/_components/reservation-form";
+import { toSwedishTime } from "@/helpers/helpers";
+import { Loader } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { addHours, setHours } from "date-fns";
+
+const defaultReservation: NewReservationType = {
+  schedule: "dinner",
+  guestNumber: 2,
+  date: new Date(),
+  slot: "",
+  name: "",
+  surname: "",
+  email: "",
+  phone: "",
+};
 
 export default function AddGuestButton() {
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    schedule: "dinner",
-    guestNumber: 0,
-    date: "",
-    time: "",
-    name: "",
-    surname: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState<NewReservationType>(defaultReservation);
+  const [availableSlots, setAvailableSlots] = useState<Date[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
 
-  useEffect(() => {
-    const now = new Date();
-    const roundedMinutes = Math.round(now.getMinutes() / 15) * 15;
-    now.setMinutes(roundedMinutes);
-    now.setSeconds(0);
-
-    setFormData((prevData) => ({
-      ...prevData,
-      date: now.toISOString().split("T")[0],
-      time: now.toTimeString().slice(0, 5),
-    }));
-  }, []);
-
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleRadioChange = (value: string) => {
+  const handleRadioChange = (value: "lunch" | "dinner") => {
     setFormData((prevData) => ({ ...prevData, schedule: value }));
   };
 
   const handleTimeChange = (value: string) => {
-    setFormData((prevData) => ({ ...prevData, time: value }));
+    console.log("received", value);
+    setFormData((prevData) => ({ ...prevData, slot: value }));
   };
 
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-
-  const startTime = new Date(`${formData.date}T${formData.time}`);
-  const endTime = new Date(startTime);
-  endTime.setHours(startTime.getHours() + 2); // Example duration: 2 hours
-
-  // Convert to timestamps
-  const fullReservationData = {
-    ...formData,
-    start: startTime.getTime(), // Convert start time to timestamp
-    end: endTime.getTime(), // Convert end time to timestamp
+  const handleDateChange = (date: Date | undefined) => {
+    if (!date) return;
+    setFormData((prevData) => ({ ...prevData, date: date }));
   };
 
-  await addReservation(fullReservationData);
-  console.log("Form submitted", fullReservationData);
-  setOpen(false);
-};
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const { slot, date, schedule, ...rest } = formData;
+    const [hours, minutes] = slot.split(":").map(Number);
+    const startTime = date;
+    startTime.setHours(hours);
+    startTime.setMinutes(minutes);
+    const endTime = addHours(startTime, 2);
 
+    const fullReservationData = {
+      ...rest,
+      start: startTime.getTime(),
+      end: endTime.getTime(),
+    };
 
-
-  const generateTimeOptions = () => {
-    const options = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const time = `${hour.toString().padStart(2, "0")}:${minute
-          .toString()
-          .padStart(2, "0")}`;
-        options.push(
-          <SelectItem key={time} value={time}>
-            {time}
-          </SelectItem>
-        );
-      }
-    }
-    return options;
+    await addReservation(fullReservationData);
+    toast({ title: "Success", description: `Added ${rest.name} to ${startTime.toDateString()}.` });
+    setFormData(defaultReservation);
+    setOpen(false);
   };
+
+  useEffect(() => {
+    setSlotsLoading(true);
+    setAvailableSlots([]);
+    getAvailableSlots(formData.date, formData.schedule, formData.guestNumber).then((availableSlots) => {
+      setAvailableSlots(availableSlots);
+      setSlotsLoading(false);
+    });
+  }, [formData.date, formData.schedule, formData.guestNumber]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -111,71 +87,24 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           Add New Guest
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>Add New Guest</DialogTitle>
-          <DialogDescription>
-            Enter the details of the new guest here. Click save when you're
-            done.
-          </DialogDescription>
+          <DialogDescription>Enter the details of the new guest here. Click save when you're done.</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="guestNumber" className="text-right">
-                Guests
-              </Label>
-              <Input
-                id="guestNumber"
-                name="guestNumber"
-                type="number"
-                required
-                value={formData.guestNumber}
-                onChange={handleChange}
-                className="col-span-3"
-              />
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+          <div className="space-y-4 p-2 pb-5">
+            <div>
+              <FormLabel text="Guests" htmlFor="guestNumber" />
+              <Input id="guestNumber" name="guestNumber" type="number" required value={formData.guestNumber} onChange={handleChange} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date" className="text-right">
-                Date
-              </Label>
-              <Input
-                required
-                id="date"
-                name="date"
-                type="date"
-                value={formData.date}
-                onChange={handleChange}
-                min={new Date().toISOString().split("T")[0]}
-                className="col-span-3"
-              />
+            <div>
+              <FormLabel text="Date" htmlFor="date" />
+              <Calendar mode="single" selected={formData.date} onSelect={handleDateChange} className="w-full" />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time" className="text-right">
-                Time
-              </Label>
-              <Select
-                required
-                value={formData.time}
-                onValueChange={handleTimeChange}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a time" />
-                </SelectTrigger>
-                <SelectContent className="h-[200px] overflow-y-scroll">
-                  {generateTimeOptions()}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="schedule" className="text-right">
-                Schedule
-              </Label>
-              <RadioGroup
-                defaultValue="dinner"
-                onValueChange={handleRadioChange}
-                className="flex col-span-3"
-              >
+            <div>
+              <FormLabel text="Schedule" htmlFor="schedule" />
+              <RadioGroup defaultValue="dinner" onValueChange={handleRadioChange} className="flex space-x-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="lunch" id="lunch" />
                   <Label htmlFor="lunch">Lunch</Label>
@@ -186,70 +115,46 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                 </div>
               </RadioGroup>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="col-span-3"
-              />
+            <div>
+              <FormLabel text="Time" htmlFor="time" />
+              {availableSlots.length > 0 ? (
+                <div className="grid grid-cols-4 gap-2">
+                  {availableSlots.map((slot) => {
+                    const slotToTime = toSwedishTime(slot);
+                    return (
+                      <div key={slot.toISOString()} className={`p-2 shadow-md rounded-md text-center cursor-pointer border ${formData.slot === slotToTime ? "bg-primary text-primary-foreground border-gray-300" : "bg-secondary"}`} onClick={() => handleTimeChange(slotToTime)}>
+                        {slotToTime}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : slotsLoading ? (
+                <p className="flex gap-2 items-center">
+                  <Loader className="animate-spin" />
+                  Loading slots...
+                </p>
+              ) : (
+                <p>No available slots</p>
+              )}
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="surname" className="text-right">
-                Surname
-              </Label>
-              <Input
-                id="surname"
-                name="surname"
-                value={formData.surname}
-                onChange={handleChange}
-                className="col-span-3"
-              />
+            <div>
+              <FormLabel text="Name" htmlFor="name" />
+              <Input id="name" name="name" value={formData.name} onChange={handleChange} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="col-span-3"
-              />
+            <div>
+              <FormLabel text="Surname" htmlFor="surname" />
+              <Input id="surname" name="surname" value={formData.surname} onChange={handleChange} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">
-                Phone
-              </Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                className="col-span-3"
-              />
+            <div>
+              <FormLabel text="Email" htmlFor="email" />
+              <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="message" className="text-right">
-                Message
-              </Label>
-              <Textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                className="col-span-3"
-              />
+            <div>
+              <FormLabel text="Phone" htmlFor="phone" />
+              <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="sticky bottom-0 bg-white py-2">
             <Button type="submit">Save Guest</Button>
           </DialogFooter>
         </form>
@@ -257,3 +162,5 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     </Dialog>
   );
 }
+
+const FormLabel = ({ text }: { text: string; htmlFor: string }) => <h3 className="my-2 font-bold">{text}</h3>;
