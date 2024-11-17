@@ -2,30 +2,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Settings,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  LayoutDashboard,
-} from "lucide-react";
+import { Settings, Calendar, ChevronLeft, ChevronRight, Menu, LayoutDashboard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navItems = [
   { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -61,28 +43,12 @@ export default function AdminNavigation() {
               <TooltipTrigger asChild>
                 <Link
                   href={item.href}
-                  className={`flex items-center ${
-                    mobile
-                      ? "flex-col py-2 px-1"
-                      : "py-3 px-3 rounded-lg transition-colors"
-                  } ${
-                    isActive
-                      ? mobile
-                        ? "text-primary"
-                        : "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
-                      : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                  className={`flex items-center ${mobile ? "flex-col py-2 px-1" : "py-3 px-3 rounded-lg transition-colors"} ${
+                    isActive ? (mobile ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50" : "text-primary") : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
                   }`}
                 >
-                  <item.icon
-                    className={`${mobile ? "h-6 w-6" : "h-5 w-5 mr-3"}`}
-                  />
-                  <span
-                    className={`${
-                      mobile ? "text-xs mt-1" : sidebarOpen ? "" : "hidden"
-                    }`}
-                  >
-                    {item.label}
-                  </span>
+                  <item.icon className={`${mobile ? "h-6 w-6" : "h-5 w-5 mr-3"}`} />
+                  <span className={`${mobile ? "text-xs mt-1" : sidebarOpen ? "" : "hidden"}`}>{item.label}</span>
                 </Link>
               </TooltipTrigger>
               <TooltipContent side={mobile ? "top" : "right"}>
@@ -98,30 +64,11 @@ export default function AdminNavigation() {
   return (
     <>
       {isDesktop ? (
-        <aside
-          className={`h-screen transition-all duration-300 ease-in-out ${
-            sidebarOpen ? "w-64" : "w-20"
-          } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700`}
-        >
+        <aside className={`h-screen transition-all duration-300 ease-in-out ${sidebarOpen ? "w-64" : "w-20"} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700`}>
           <div className="flex items-center justify-between h-16 px-4">
-            <h1
-              className={`text-xl font-bold text-primary ${
-                sidebarOpen ? "" : "hidden"
-              }`}
-            >
-              Il Gradino
-            </h1>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleSidebar}
-              className="h-9 w-9"
-            >
-              {sidebarOpen ? (
-                <ChevronLeft className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
+            <h1 className={`text-xl font-bold text-primary ${sidebarOpen ? "" : "hidden"}`}>Il Gradino</h1>
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="h-9 w-9">
+              {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
               <span className="sr-only">Toggle Sidebar</span>
             </Button>
           </div>
@@ -135,11 +82,7 @@ export default function AdminNavigation() {
         <>
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="fixed top-4 left-4 z-40"
-              >
+              <Button variant="outline" size="icon" className="fixed top-4 left-4 z-40">
                 <Menu className="h-4 w-4" />
                 <span className="sr-only">Open Menu</span>
               </Button>

@@ -1,6 +1,5 @@
 import { getAllSlots } from "@/helpers/helpers";
 import Timeline from "./timeline";
-import { getReservations } from "@/app/actions/firebase-actions";
 import { Params } from "./date-schedule-selector";
 import { Reservation } from "@/types/types";
 

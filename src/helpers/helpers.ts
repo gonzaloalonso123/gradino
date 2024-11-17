@@ -1,4 +1,5 @@
 import { Reservation, SlottedReservation, Table } from "@/types/types";
+import { Slot } from "@radix-ui/react-slot";
 import { addHours } from "date-fns";
 
 export const getTimeSlotsAvailable = (opens: boolean, reservations: Reservation[], tables: Table[], openingTime: number, closingTime: number, interval: number, guestNumber: number) => {
@@ -60,12 +61,12 @@ export const getSlotsForReservation = (reservation: Reservation | PartialReserva
 	return { thereIsATable, possibleTables }
 }
 
-export const getAllSlots = (reservations: Reservation[], tables: Table[]) => {
+export const getAllSlots = (reservations: Reservation[], tables: Table[]): { tables: Table[], allocatedReservations: SlottedReservation[] } => {
 	tables = tables.map(table => ({ ...table, reservations: [] }));
-	const allocatedReservations = reservations.map((reservation) => {
+	const allocatedReservations: SlottedReservation[] = reservations.map((reservation): SlottedReservation => {
 		const slottedReservation = addTablesToReservation(reservation, []);
 		const { thereIsATable, possibleTables } = getSlotsForReservation(reservation, tables);
-		if (!thereIsATable) return reservation;
+		if (!thereIsATable) return slottedReservation;
 		let guestsToAllocate = reservation.guestNumber;
 		const sortedTables = possibleTables.sort((a, b) => b.numberOfSits - a.numberOfSits);
 		while (guestsToAllocate > 0) {

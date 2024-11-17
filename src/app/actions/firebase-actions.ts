@@ -29,6 +29,7 @@ export async function updateReservation(
 			.doc(reservationId)
 			.update(updatedReservation);
 		console.log(`Reservation with ID: ${reservationId} has been updated.`);
+		revalidatePath('/admin/overview')
 	} catch (error) {
 		console.error("Error updating reservation: ", error);
 	}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { differenceInMinutes, format } from "date-fns";
 import { Reservation, SlottedReservation, Table } from "@/types/types";
 import { Clock, Edit, MailCheck, MessageSquareText, Phone, Trash, User, Users } from "lucide-react";
@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { deleteReservation } from "@/app/actions/firebase-actions";
 import { toast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { AddEditContext } from "../_context/AddEditContext";
 
 const CELL_WIDTH = 40;
 const CELL_HEIGHT = 40;
@@ -31,7 +32,6 @@ export default function Timeline({ reservations, tables, startingHour, endingHou
   }, [startOfTimeline, hours, interval]);
 
   const reservationPositions = useMemo(() => {
-    console.log(reservations);
     return reservations.flatMap((reservation) => {
       const color = (reservation.tables?.length ?? 1) > 1 ? generateRandomColor() : "#0000bb";
       return reservation.tables.map((table) => {
@@ -136,6 +136,7 @@ const Cells = ({ timeTables, Tables }: { timeTables: Date[]; Tables: Table[] }) 
 
 const ReservationBlock = ({ reservation, tables }: { reservation: any; tables: number[] }) => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const { openEditDialog } = useContext(AddEditContext);
 
   const handleDelete = async () => {
     try {
@@ -183,7 +184,11 @@ const ReservationBlock = ({ reservation, tables }: { reservation: any; tables: n
           <ReservationInfo {...{ ...reservation, tables }} />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            openEditDialog(reservation);
+          }}
+        >
           <Edit className="mr-2 h-4 w-4" />
           <span>Edit</span>
         </DropdownMenuItem>
@@ -238,7 +243,7 @@ const ReservationInfo = ({ email, guestNumber, phone, start, message, tables }: 
     <h3 className="text-primary-foreground text-xs">Tables</h3>
     <div className="flex gap-2 flex-wrap">
       {tables.map((table, index) => (
-        <label className="text-primary-foreground flex flex-col justify-center items-center text-xs p-1 rounded-md shadow-md">
+        <label className="text-primary-foreground flex flex-col justify-center items-center text-xs p-1 rounded-md shadow-md" key={index}>
           <User size={10} />
           {table}
         </label>
